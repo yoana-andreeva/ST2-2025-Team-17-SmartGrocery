@@ -1,0 +1,36 @@
+﻿@model SmartGrocery.Models.Product
+
+@{
+    ViewData["Title"] = "Edit the product";
+}
+
+<h2 class="mt-4 mb-3 text-center">@ViewData["Title"]</h2>
+
+<div class="card shadow-sm p-4">
+    <form asp-action="Edit">
+        <input type="hidden" asp-for="Id" />
+
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label">Name</label>
+            <input asp-for="Name" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Quantity" class="form-label">Quantity</label>
+            <input asp-for="Quantity" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Unit" class="form-label">Unit</label>
+            <input asp-for="Unit" class="form-control" />
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Price" class="form-label">Price</label>
+            <input asp-for="Price" class="form-control" />
+        </div>
+
+        <button type="submit" class="btn btn-primary">💾 Save the changes</button>
+        <a asp-action="Index" class="btn btn-secondary ms-2">Go Back</a>
+    </form>
+</div>

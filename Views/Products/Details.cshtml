@@ -1,0 +1,26 @@
+﻿@model SmartGrocery.Models.Product
+
+@{
+    ViewData["Title"] = "Details for the products";
+}
+
+<h2 class="mt-4 mb-3 text-center">@ViewData["Title"]</h2>
+
+<div class="card shadow p-4">
+    <dl class="row">
+        <dt class="col-sm-3">Name:</dt>
+        <dd class="col-sm-9">@Model.Name</dd>
+
+        <dt class="col-sm-3">Quantity:</dt>
+        <dd class="col-sm-9">@Model.Quantity</dd>
+
+        <dt class="col-sm-3">Unit:</dt>
+        <dd class="col-sm-9">@Model.Unit</dd>
+
+        <dt class="col-sm-3">Price:</dt>
+        <dd class="col-sm-9">@Model.Price лв</dd>
+    </dl>
+
+    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn btn-primary">✏️ Edit</a>
+    <a asp-action="Index" class="btn btn-secondary ms-2">Go Back</a>
+</div>

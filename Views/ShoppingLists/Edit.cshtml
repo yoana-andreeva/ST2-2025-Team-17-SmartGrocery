@@ -1,0 +1,102 @@
+﻿@model SmartGrocery.DTOs.ShopingListCreateDTO
+
+@{
+    ViewData["Title"] = "Edit Shopping List";
+}
+
+<div class="container mt-5">
+    <h2 class="fw-bold text-primary mb-4">✏️ Edit Shopping List</h2>
+
+    <form asp-action="Edit" method="post">
+        <input type="hidden" name="Id" value="@ViewBag.ListId" />
+        <div asp-validation-summary="ModelOnly" class="text-danger mb-3"></div>
+
+        <div class="mb-4">
+            <label asp-for="Name" class="form-label fw-semibold">List Name</label>
+            <input asp-for="Name" class="form-control form-control-lg shadow-sm rounded-3" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <h5 class="mb-3">Items</h5>
+        <div id="product-container">
+            @for (int i = 0; i < Model.SelectedProducts.Count; i++)
+            {
+                <div class="row align-items-center mb-3 product-item p-3 bg-light rounded-3 shadow-sm">
+                    <div class="col-6">
+                        <select name="SelectedProducts[@i].ProductId" class="form-select">
+                            <option value="">-- Choose a product --</option>
+                            @foreach (var p in Model.AvailableProducts)
+                            {
+                                <option value="@p.Id" selected="@(p.Id == Model.SelectedProducts[i].ProductId ? "selected" : null)">@p.Name</option>
+                            }
+                        </select>
+                    </div>
+                    <div class="col-4">
+                        <input type="number" name="SelectedProducts[@i].Quantity" class="form-control" min="1" value="@Model.SelectedProducts[i].Quantity" />
+                    </div>
+                    <div class="col-2 text-end">
+                        <button type="button" class="btn btn-outline-danger btn-sm remove-item">×</button>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <button type="button" id="add-product" class="btn btn-outline-secondary mb-4">+ Add another item</button>
+
+        <div class="d-grid">
+            <input type="submit" value="Save Changes" class="btn btn-primary btn-lg rounded-pill shadow-sm" />
+        </div>
+    </form>
+
+    <div class="mt-4">
+        <a asp-action="Index" class="btn btn-outline-secondary rounded-pill px-4">← Back to Lists</a>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let productIndex = @Model.SelectedProducts.Count;
+
+        const productOptions = `
+                    <option value="">-- Choose a product --</option>
+        @foreach (var p in Model.AvailableProducts)
+        {
+            <text><option value="@p.Id">@p.Name</option></text>
+        }
+                `;
+
+        document.getElementById("add-product").addEventListener("click", function () {
+            const container = document.getElementById("product-container");
+
+            const newItem = document.createElement("div");
+            newItem.classList.add("row", "align-items-center", "mb-3", "product-item", "p-3", "bg-light", "rounded-3", "shadow-sm");
+
+            newItem.innerHTML = `
+                        <div class="col-6">
+                            <select name="SelectedProducts[${productIndex}].ProductId" class="form-select">
+                                ${productOptions}
+                            </select>
+                        </div>
+                        <div class="col-4">
+                            <input type="number" name="SelectedProducts[${productIndex}].Quantity" class="form-control" min="1" value="1" />
+                        </div>
+                        <div class="col-2 text-end">
+                            <button type="button" class="btn btn-outline-danger btn-sm remove-item">×</button>
+                        </div>
+                    `;
+
+            container.appendChild(newItem);
+            productIndex++;
+        });
+
+        document.addEventListener("click", function (e) {
+            if (e.target.classList.contains("remove-item")) {
+                e.target.closest(".product-item").remove();
+            }
+        });
+    </script>
+
+    @{
+        await Html.RenderPartialAsync("_ValidationScriptsPartial");
+    }
+}

@@ -1,0 +1,102 @@
+﻿@{
+    ViewData["Title"] = "AI Recipe Assistant";
+}
+
+<div class="container mt-5">
+    <div class="card shadow-lg p-4 rounded-4">
+        <div class="text-center mb-4">
+            <h2 class="fw-bold text-primary">AI Recipe Assistant</h2>
+            <p class="text-muted">Select one of your shopping lists and get AI-generated recipe suggestions.</p>
+        </div>
+
+        <div class="mb-3">
+            <label for="shoppingList" class="form-label fw-semibold">Choose a shopping list:</label>
+            <select id="shoppingList" class="form-select form-select-lg">
+                <option value="">-- Select list --</option>
+                @if (ViewBag.UserLists != null)
+                {
+                    foreach (var list in ViewBag.UserLists)
+                    {
+                        <option value="@list.Id">@list.Name</option>
+                    }
+                }
+            </select>
+        </div>
+
+        <div class="d-flex justify-content-center mt-4">
+            <button id="suggestBtn" class="btn btn-primary btn-lg rounded-pill px-5 shadow-sm">
+                Get Recipe Suggestions
+            </button>
+        </div>
+
+        <div id="loading" class="text-center mt-4" style="display:none;">
+            <div class="spinner-border text-primary" role="status"></div>
+            <p class="mt-2 text-muted">Thinking...</p>
+        </div>
+
+        <div id="result" class="mt-4" style="display:none;">
+            <h4 class="text-success">🍽️ Suggested Recipes:</h4>
+            <div id="recipeText" class="p-3 bg-light border rounded-3"></div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        document.getElementById('suggestBtn').addEventListener('click', async () => {
+            const listId = document.getElementById('shoppingList').value;
+            if (!listId) {
+                alert("Please select a shopping list first!");
+                return;
+            }
+
+            document.getElementById('loading').style.display = 'block';
+            document.getElementById('result').style.display = 'none';
+
+            try {
+                const response = await fetch('/AI/SuggestRecipes', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ shoppingListId: parseInt(listId) })
+                });
+
+                const data = await response.json();
+                console.log('API Response:', data);  // Debug: Log full response
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('result').style.display = 'block';
+
+                if (data.success) {
+                    const container = document.getElementById('recipeText');
+                    container.innerHTML = '';
+
+                    // Improved parsing: Try splitting on numbers first, then on "Recipe Name:" as fallback
+                    let parts = data.response.split(/\d+\.\s*/).filter(p => p.trim() !== '');
+                    if (parts.length < 2) {
+                        parts = data.response.split(/Recipe Name:/).slice(1).map(p => 'Recipe Name:' + p);  // Fallback
+                    }
+
+                    parts.forEach((recipe, i) => {
+                        const card = document.createElement('div');
+                        card.className = 'card mb-3 shadow-sm';
+                        card.innerHTML = `
+                            <div class="card-body">
+                                <h5 class="card-title text-primary fw-bold">Recipe ${i + 1}</h5>
+                                <p class="card-text">${recipe.trim().replace(/\n/g, '<br>')}</p>
+                            </div>
+                        `;
+                        container.appendChild(card);
+                    });
+
+                    if (parts.length === 0) {
+                        container.innerHTML = `<p class='text-muted'>No recipes parsed. Raw response: ${data.response}</p>`;
+                    }
+                } else {
+                    document.getElementById('recipeText').innerHTML = `<p class="text-danger">${data.message || "No recipes found."}</p>`;
+                }
+            } catch (err) {
+                document.getElementById('loading').style.display = 'none';
+                alert("Error: " + err.message);
+            }
+        });
+    </script>
+}

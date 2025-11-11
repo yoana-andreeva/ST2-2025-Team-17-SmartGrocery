@@ -1,0 +1,36 @@
+﻿@model SmartGrocery.Models.ShoppingList
+
+@{
+    ViewData["Title"] = "Delete Shopping List";
+}
+
+<h1>Delete Shopping List</h1>
+<hr />
+
+<h3>Are you sure you want to delete this list?</h3>
+
+<div class="card shadow-sm p-3 mb-4">
+    <h4>@Model.Name</h4>
+    <p><strong>Number of items:</strong> @Model.Items.Count()</p>
+
+    @if (Model.Items.Any())
+    {
+        <ul class="list-group mt-3">
+            @foreach (var item in Model.Items)
+            {
+                <li class="list-group-item d-flex justify-content-between align-items-center">
+                    <span>@item.Product?.Name</span>
+                    <span class="badge bg-secondary">Qty: @item.Quantity</span>
+                </li>
+            }
+        </ul>
+    }
+</div>
+
+<form asp-action="Delete" method="post">
+    <input type="hidden" asp-for="Id" />
+    <button type="submit" class="btn btn-danger">Delete</button>
+    <a asp-action="Index" class="btn btn-secondary">Cancel</a>
+</form>
+
+

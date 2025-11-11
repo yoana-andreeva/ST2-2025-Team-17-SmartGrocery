@@ -1,0 +1,38 @@
+﻿@model SmartGrocery.Models.Product
+
+@{
+    ViewData["Title"] = "Add a new product";
+}
+
+<h2 class="mt-4 mb-3 text-center">@ViewData["Title"]</h2>
+
+<div class="card shadow-sm p-4">
+    <form asp-action="Create">
+        <div class="mb-3">
+            <label asp-for="Name" class="form-label">Name</label>
+            <input asp-for="Name" class="form-control" placeholder="Type a product name" />
+            <span asp-validation-for="Name" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Quantity" class="form-label">Quantity</label>
+            <input asp-for="Quantity" class="form-control" placeholder="for inst. 2" />
+            <span asp-validation-for="Quantity" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Unit" class="form-label">Unit</label>
+            <input asp-for="Unit" class="form-control" placeholder="for inst. pcs, kg, l" />
+            <span asp-validation-for="Unit" class="text-danger"></span>
+        </div>
+
+        <div class="mb-3">
+            <label asp-for="Price" class="form-label">Price</label>
+            <input asp-for="Price" class="form-control" placeholder="for inst. 2.50" />
+            <span asp-validation-for="Price" class="text-danger"></span>
+        </div>
+
+        <button type="submit" class="btn btn-success">💾 Save</button>
+        <a asp-action="Index" class="btn btn-secondary ms-2">Go Back</a>
+    </form>
+</div>

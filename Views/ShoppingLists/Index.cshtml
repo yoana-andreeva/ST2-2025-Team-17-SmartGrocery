@@ -1,0 +1,109 @@
+﻿@model IEnumerable<SmartGrocery.Models.ShoppingList>
+
+@{
+    ViewData["Title"] = "My Shopping Lists";
+}
+
+<div class="container py-5">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h2 class="fw-bold text-primary mb-0">
+            🛒 My Shopping Lists
+        </h2>
+        <a asp-action="Create" class="btn btn-success rounded-pill px-4 shadow-sm">
+            <i class="bi bi-plus-circle"></i> New List
+        </a>
+    </div>
+
+    @if (!Model.Any())
+    {
+        <div class="alert alert-info text-center shadow-sm rounded-3">
+            <i class="bi bi-emoji-neutral"></i> You don't have any shopping lists yet.
+            <a asp-action="Create" class="alert-link fw-semibold">Create one now!</a>
+        </div>
+    }
+    else
+    {
+        <div class="row g-4">
+            @foreach (var list in Model)
+            {
+                <div class="col-md-6 col-lg-4">
+                    <div class="card border-0 shadow-lg rounded-4 h-100 hover-card">
+                        <div class="card-body d-flex flex-column justify-content-between">
+                            <div>
+                                <h5 class="fw-bold text-dark mb-2">
+                                    <i class="bi bi-list-check text-success"></i> @list.Name
+                                </h5>
+
+                                <p class="text-muted small mb-3">
+                                    <i class="bi bi-box-seam"></i>
+                                    @if (list.Items != null && list.Items.Any())
+                                    {
+                                        @($"{list.Items.Count} items")
+                                    }
+                                    else
+                                    {
+                                        @("No items yet")
+                                    }
+                                </p>
+
+                                @if (list.Items != null && list.Items.Any())
+                                {
+                                    <ul class="list-group list-group-flush small border-0">
+                                        @foreach (var item in list.Items.Take(3))
+                                        {
+                                            <li class="list-group-item px-0 border-0">
+                                                <i class="bi bi-dot text-primary"></i> @item.Product?.Name
+                                                <span class="text-muted">× @item.Quantity</span>
+                                            </li>
+                                        }
+
+                                        @if (list.Items.Count > 3)
+                                        {
+                                            <li class="list-group-item px-0 border-0 text-muted fst-italic">
+                                                ...and more
+                                            </li>
+                                        }
+                                    </ul>
+                                }
+                            </div>
+
+                            <div class="d-flex justify-content-between align-items-center mt-4">
+                                <div class="btn-group" role="group">
+                                    <a asp-action="Details" asp-route-id="@list.Id"
+                                       class="btn btn-outline-primary btn-sm rounded-pill shadow-sm">
+                                        <i class="bi bi-eye"></i> View
+                                    </a>
+                                    <a asp-action="Edit" asp-route-id="@list.Id"
+                                       class="btn btn-outline-warning btn-sm rounded-pill shadow-sm">
+                                        <i class="bi bi-pencil-square"></i> Edit
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@list.Id"
+                                       class="btn btn-outline-danger btn-sm rounded-pill shadow-sm">
+                                        <i class="bi bi-trash"></i> Delete
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+    }
+</div>
+
+@section Scripts {
+    <script>
+        // Small hover animation for cards
+        document.querySelectorAll('.hover-card').forEach(card => {
+            card.addEventListener('mouseenter', () => card.classList.add('shadow-xl', 'scale-up'));
+            card.addEventListener('mouseleave', () => card.classList.remove('shadow-xl', 'scale-up'));
+        });
+    </script>
+
+    <style>
+        .scale-up {
+            transform: translateY(-3px);
+            transition: transform 0.2s ease-in-out;
+        }
+    </style>
+}

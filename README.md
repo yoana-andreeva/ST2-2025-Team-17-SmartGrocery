@@ -36,9 +36,11 @@ This project demonstrates a Smart Grocery MVC application enhanced with an AI Re
 - Download a .gguf model compatible with GPT4All and place it inside:
 
 pythonServer/models/
-Example:
 
+Example:
 orca-mini-3b-gguf2-q4_0.gguf
+
+
 ---
 
 ## Start Instructions
@@ -75,3 +77,20 @@ Options Pattern	appsettings.json	Configurable AI endpoint
 Facade	AiService	Simplifies interaction with Python API
 DTO	SuggestRequest, Query	Structured data between systems
 Validation Pattern	DataAnnotations	Safe input validation
+
+## Troubleshooting
+
+| Problem | Cause | Fix |
+|----------|--------|-----|
+| `UnicodeDecodeError` when running `ai_server.py` | File encoding not UTF-8 | Re-save the file in UTF-8 (e.g., in VS Code → Save with Encoding → UTF-8) |
+| `Request failed: HTTP 404 Not Found` | GPT4All couldn’t download the model | Manually download the `.gguf` file and place it in `pythonServer/models/` |
+| `bind: Only one usage of each socket address` | Port 11434 already in use by another Ollama or GPT4All process | Kill the process using `taskkill /PID <pid> /F` and restart |
+| ASP.NET app shows “No instruction found” | AI server returned empty or malformed response | Adjust prompt formatting and check FastAPI console for errors |
+| MVC app can’t reach AI server | Wrong URL or port | Ensure both use the same port (`127.0.0.1:5000`) and check `appsettings.json` BaseUrl |
+| Slow model loading | Using large model (e.g. 7B+) | Switch to a smaller quantized model like `orca-mini-3b-gguf2-q4_0.gguf` |
+| `UnicodeDecodeError` or `SyntaxError` during run | Non-UTF characters in comments or docstrings | Remove non-ASCII characters or specify encoding at top: `# -*- coding: utf-8 -*-` |
+| AI not responding | Model path incorrect | Verify `model_path` in `ai_server.py` matches your real folder (e.g. `D:\\GPT4All_Models`) |
+| “Connection refused” error in MVC | FastAPI not running | Start Python server with `uvicorn ai_server:app --host 127.0.0.1 --port 5000` |
+| AI returns weird symbols | Model file corrupted or incomplete | Delete and re-download `.gguf` model |
+| Bulgarian output sounds unnatural | Model not trained for BG language | Write prompts in English or mix short BG + English words |
+
